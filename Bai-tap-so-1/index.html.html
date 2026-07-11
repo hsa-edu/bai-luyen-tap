@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mệnh Đề Trạng Ngữ và Sự hòa Hợp Chủ Vị</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f1f5f9; 
+            color: #0f172a;
+            margin: 0;
+            padding: 25px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            align-items: flex-start;
+        }
+        .quiz-container { 
+            background: #ffffff; 
+            padding: 35px; 
+            border-radius: 8px; 
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            max-width: 850px; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .header-left { color: #1d4ed8; font-size: 14px; }
+        .header-right { text-align: right; max-width: 70%; color: #475569; }
+         
+        .name-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border: 1px solid #cbd5e1;
+        }
+        .name-section input {
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 2px solid #94a3b8; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            font-weight: 500;
+            outline: none;
+            background: #ffffff;
+        }
+        .name-section input:focus {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+        }
+
+        .btn-start {
+            margin-top: 15px;
+            padding: 12px;
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-start:hover { background: #1e40af; }
+        .btn-start:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+         
+        .question-box { 
+            background: #ffffff; 
+            border: 1px solid #cbd5e1;
+            border-left: 6px solid #1d4ed8; 
+            padding: 22px; 
+            margin-bottom: 25px; 
+            border-radius: 4px; 
+            transition: opacity 0.2s;
+        }
+        .question-box p {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #0f172a;
+            line-height: 1.4;
+        }
+        /* Chỉ mờ khi chưa ấn bắt đầu làm bài */
+        .question-box.locked { opacity: 0.35; pointer-events: none; }
+
+        .option-label { 
+            display: flex;
+            align-items: center;
+            margin: 8px 0; 
+            cursor: pointer; 
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background: #f8fafc;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .option-label:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .option-label input[type="radio"]:checked + span,
+        .option-label:has(input[type="radio"]:checked) {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+        .option-label input[type="radio"] { 
+            margin-right: 12px; 
+            width: 18px;
+            height: 18px;
+            accent-color: #1d4ed8;
+            cursor: pointer;
+        }
+         
+        .feedback { 
+            margin-top: 15px; 
+            padding: 12px 16px; 
+            border-radius: 4px; 
+            display: none; 
+            font-size: 15px; 
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; display: block; font-weight: 500; }
+        .feedback.wrong { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; display: block; font-weight: 500; }
+
+        .quiz-navigation {
+            position: sticky;
+            top: 25px; 
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            width: 230px;
+            box-sizing: border-box;
+        }
+         
+        .timer-box {
+            background: #0f172a;
+            color: #38bdf8;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        }
+        .timer-urgent { color: #ef4444 !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px; 
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 14px; 
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .nav-item:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+        }
+        .nav-item.locked { pointer-events: none; opacity: 0.4; }
+        .nav-item.answered {
+            background: #1d4ed8;
+            color: white;
+            border-color: #1d4ed8;
+        }
+        .nav-item.flagged {
+            background: #f59e0b !important;
+            color: white !important;
+            border-color: #d97706 !important;
+        }
+        .nav-item.answered.flagged {
+            background: #1d4ed8 !important;
+            border: 3px solid #f59e0b !important;
+            box-sizing: border-box;
+        }
+
+        .btn-submit { 
+            width:100%; 
+            padding: 14px; 
+            background: #1d4ed8; 
+            color:white; 
+            border:none; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            cursor:pointer; 
+            font-size:16px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(29, 78, 216, 0.2);
+            transition: background 0.15s;
+        }
+        .btn-submit:hover { background: #1e40af; }
+        .btn-submit:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed !important; box-shadow: none !important; }
+
+        /* BẢNG ĐÁNH GIÁ NĂNG LỰC CHI TIẾT */
+        .score-display-box {
+            background: #ffffff; 
+            border: 2px solid #1d4ed8; 
+            padding: 25px; 
+            border-radius: 8px; 
+            margin-top: 25px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .score-header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .score-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .score-result-badge {
+            border: 2px solid #1d4ed8;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
+        .improvement-box {
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            border-radius: 4px;
+            text-align: left;
+        }
+        .improvement-box h4 {
+            margin: 0 0 10px 0;
+            color: #ea580c;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .improvement-list {
+            margin: 0;
+            padding-left: 20px;
+            color: #c2410c;
+            font-size: 15px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+            body { flex-direction: column; align-items: center; padding: 15px; }
+            .quiz-container { padding: 20px; }
+            .quiz-navigation { position: static; width: 100%; max-width: 850px; margin-top: 20px; }
+            .nav-grid { grid-template-columns: repeat(10, 1fr); } 
+        }
+
+        /* LAYER BẢO MẬT CHỐNG COPY (ĐÃ SỬA LỖI MỜ CHUỘT) */
+        body, .question-box, p, span, label, h2 {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+        input[type="text"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header-info">
+        <div class="header-left">THẦY HÒA</div>
+        <div class="header-right">Đ/C 13 VỆ ĐỊNH. KHỐI 9 THÀNH VINH — 0847032378</div>
+    </div>
+
+    <h2 style="text-align: center; color: #0f172a; font-size: 24px; font-weight: 800; margin-top: 5px; margin-bottom: 25px;">Mệnh đề trạng ngữ và Sự hòa hợp chủ vị</h2>
+     
+    <div class="name-section">
+        <label style="font-weight: bold; margin-bottom: 8px; display: block; color: #1d4ed8; text-align: left; font-size: 15px;">Họ và tên học sinh:</label>
+        <input type="text" id="student-name" oninput="validateNameInput()" placeholder="Nhập họ và tên của em vào đây...">
+        <button id="btn-start-quiz" class="btn-start" onclick="startQuiz()" disabled>BẮT ĐẦU LÀM BÀI</button>
+    </div>    
+
+    <div id="quiz-area"></div>
+     
+    <div class="submit-section" style="margin-top:35px; border-top:2px solid #cbd5e1; padding-top:20px;">
+        <button id="btn-submit-total" class="btn-submit" onclick="submitTotal()" disabled>NỘP BÀI</button>
+
+        <div id="html-score-display" class="score-display-box" style="display: none;">
+            <div class="score-header-box">
+                <div class="score-title">📊 ĐÁNH GIÁ NĂNG LỰC CHI TIẾT</div>
+                <div class="score-result-badge">
+                    KẾT QUẢ ĐẠT ĐƯỢC: 
+                    <span id="txt-correct-count" style="color: #16a34a; margin-left: 5px;">Đúng: 0</span> / 
+                    <span id="txt-wrong-count" style="color: #dc2626;">Sai: 0</span>
+                </div>
+            </div>
+            <div style="font-size: 24px; color: #1d4ed8; font-weight: 800; text-align: left; margin-bottom: 15px;">
+                Tổng điểm: <span id="txt-total-score">0/30</span>
+            </div>
+            
+            <div id="box-improvement" class="improvement-box" style="display: none;">
+                <h4>💡 Các phần em làm sai nhiều và cần tập trung cải thiện kiến thức:</h4>
+                <ul id="list-improvement" class="improvement-list"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="quiz-navigation">
+    <div class="timer-box" id="quiz-timer">40:00</div>
+    <h3 style="margin-top: 0; font-size: 13px; text-align: center; color: #334155; font-weight: bold; text-transform: uppercase;">Tiến độ</h3>
+    <div class="nav-grid" id="nav-grid-area"></div>
+</div>
+
+<script>
+const quizData = [
+    {
+        q: "1. As soon as the teacher ________ into the classroom next period, all students will stand up.",
+        opts: ["A. walks", "B. will walk", "C. walked", "D. is walking"],
+        k: 0,
+        tense: "Mệnh đề thời gian & Phối thì tương lai",
+        exp: "Phối thì tương lai với mệnh đề thời gian: As soon as + S + V (Hiện tại đơn), S + will + V. Vì chủ ngữ \"the teacher\" số ít nên động từ chia là \"walks\"."
+    },
+    {
+        q: "2. ________ the course was very difficult, many students passed the final exam.",
+        opts: ["A. Despite", "B. Because", "C. Although", "D. Because of"],
+        k: 2,
+        tense: "Liên từ (Mệnh đề nhượng bộ)",
+        exp: "Sau chỗ trống là một mệnh đề (S + V). Xét theo ngữ cảnh mang ý nghĩa tương phản (Mặc dù khóa học rất khó nhưng nhiều học sinh vẫn đỗ) -> chọn Although."
+    },
+    {
+        q: "3. Parents always want to give their children a good ________.",
+        opts: ["A. educate", "B. education", "C. educational", "D. educationally"],
+        k: 1,
+        tense: "Từ loại (Word Form)",
+        exp: "Sau tính từ \"good\" cần một danh từ để tạo thành cụm danh từ -> chọn danh từ \"education\" (nền giáo dục)."
+    },
+    {
+        q: "4. He studies hard every day ________ he can get good marks.",
+        opts: ["A. so that", "B. in order to", "C. so as to", "D. because of"],
+        k: 0,
+        tense: "Cấu trúc chỉ mục đích",
+        exp: "Cấu trúc chỉ mục đích đi với một mệnh đề: So that + S + can/could + V (để mà...). Loại B và C vì theo sau phải là động từ nguyên thể (to + V)."
+    },
+    {
+        q: "5. Yesterday, the lights ________ out while we were studying our lesson in the room.",
+        opts: ["A. goes", "B. will go", "C. went", "D. had gone"],
+        k: 2,
+        tense: "Quá khứ Đơn & Tiếp diễn",
+        exp: "Diễn tả một hành động xen vào (went out - mất điện) khi một hành động khác đang xảy ra trong quá khứ (were studying) -> chia thì Quá khứ đơn (went)."
+    },
+    {
+        q: "6. The math homework was ________ hard for the children to finish in ten minutes.",
+        opts: ["A. so", "B. such", "C. too", "D. enough"],
+        k: 2,
+        tense: "Cấu trúc Too/Enough/So/Such",
+        exp: "Áp dụng cấu trúc: Too + Adj + for sb + to + V (Quá... để cho ai làm gì) -> chọn too."
+    },
+    {
+        q: "7. We will wait here until our friends ________ tomorrow morning to walk to school together.",
+        opts: ["A. will arrive", "B. arrive", "C. arrived", "D. are arriving"],
+        k: 1,
+        tense: "Mệnh đề thời gian & Phối thì tương lai",
+        exp: "Phối thì tương lai với mệnh đề thời gian: Until + S + V (Hiện tại đơn), S + will + V. Không dùng thì tương lai đơn (will) ngay sau liên từ chỉ thời gian -> chọn arrive."
+    },
+    {
+        q: "8. The outdoor class was cancelled ________ the bad weather.",
+        opts: ["A. because", "B. because of", "C. although", "D. despite"],
+        k: 1,
+        tense: "Liên từ (Chỉ nguyên nhân)",
+        exp: "Sau chỗ trống là một cụm danh từ \"the bad weather\" và mang ý nghĩa nguyên nhân -> dùng because of (bởi vì)."
+    },
+    {
+        q: "9. My uncle is a well-________ person; he knows a lot about science.",
+        opts: ["A. educate", "B. education", "C. educated", "D. educational"],
+        k: 2,
+        tense: "Từ loại (Tính từ ghép)",
+        exp: "Sử dụng tính từ ghép: \"well-educated\" (có học thức, được giáo dục tốt) để bổ nghĩa cho danh từ \"person\" đứng phía sau -> chọn educated."
+    },
+    {
+        q: "10. They decided to stay at home because it ________ heavily last Sunday.",
+        opts: ["A. rains", "B. rained", "C. will rain", "D. is raining"],
+        k: 1,
+        tense: "Quá khứ Đơn",
+        exp: "Câu có mốc thời gian xác định trong quá khứ là \"last Sunday\" -> chia thì Quá khứ đơn (rained)."
+    },
+    {
+        q: "11. As soon as the admission office ________ the enrollment applications next week, they will update the portal.",
+        opts: ["A. receives", "B. will receive", "C. received", "D. is receiving"],
+        k: 0,
+        tense: "Mệnh đề thời gian & Phối thì tương lai",
+        exp: "Mệnh đề thời gian bắt đầu bằng \"As soon as\" không chia thì tương lai -> dùng thì Hiện tại đơn để diễn tả một hành động ở tương lai. Chủ ngữ \"the admission office\" số ít -> chọn receives."
+    },
+    {
+        q: "12. The school's new curriculum guidelines are ________ strict that no faculty member can adapt to them easily.",
+        opts: ["A. too", "B. enough", "C. so", "D. such"],
+        k: 2,
+        tense: "Cấu trúc Too/Enough/So/Such",
+        exp: "Áp dụng cấu trúc: So + Adj + that + S + V (Quá... đến nỗi mà). Ngay trước \"that\" là tính từ \"strict\" -> chọn so."
+    },
+    {
+        q: "13. In a poorly funded school district, passionate teachers still strive to become effective ________.",
+        opts: ["A. educate", "B. education", "C. educational", "D. educators"],
+        k: 3,
+        tense: "Từ loại (Word Form)",
+        exp: "Sau tính từ \"effective\" cần một danh từ. Dựa vào ngữ cảnh đang nói về các giáo viên (teachers), ta chọn danh từ chỉ người ở dạng số nhiều là educators (nhà giáo dục)."
+    },
+    {
+        q: "14. The vocational institution decided to expand its campus ________ a sharp increase in student enrollment.",
+        opts: ["A. because", "B. because of", "C. although", "D. despite"],
+        k: 1,
+        tense: "Liên từ (Chỉ nguyên nhân)",
+        exp: "Sau chỗ trống là cụm danh từ \"a sharp increase in student enrollment\" -> loại các liên từ đi với mệnh đề. Xét về nghĩa nguyên nhân, chọn because of."
+    },
+    {
+        q: "15. Top-tier students will stay in the library until the online system ________ updating their academic transcripts.",
+        opts: ["A. will finish", "B. finishes", "C. finished", "D. is finishing"],
+        k: 1,
+        tense: "Mệnh đề thời gian & Phối thì tương lai",
+        exp: "Phối thì tương lai với liên từ chỉ thời gian: S + will + V + until + S + V (Hiện tại đơn). Chủ ngữ \"the online system\" số ít -> chọn finishes."
+    },
+    {
+        q: "16. As soon as the alarm ________, the student woke up and immediately checked his continuous assessment score.",
+        opts: ["A. rings", "B. will ring", "C. rang", "D. had rung"],
+        k: 2,
+        tense: "Quá khứ Đơn",
+        exp: "Diễn tả một chuỗi các hành động xảy ra nối tiếp nhau liên tục trong quá khứ (woke up, checked) -> chia thì Quá khứ đơn (rang)."
+    },
+    {
+        q: "17. ________ having multiple academic degrees from top-tier universities, he decided to acquire more knowledge in economic laws.",
+        opts: ["A. Although", "B. Despite", "C. Because", "D. Because of"],
+        k: 1,
+        tense: "Liên từ (Mệnh đề nhượng bộ)",
+        exp: "Cấu trúc nhượng bộ: Despite + V-ing/Noun phrase. Sau chỗ trống là động từ thêm -ing \"having\" -> chọn Despite."
+    },
+    {
+        q: "18. The professor required all students to submit the essay on time ________ they wouldn't get a penalty.",
+        opts: ["A. so as not to", "B. in order not to", "C. so that", "D. so as to"],
+        k: 2,
+        tense: "Cấu trúc chỉ mục đích",
+        exp: "Sau chỗ trống là một mệnh đề phủ định (they wouldn't...) -> dùng so that (để mà). Loại các đáp án còn lại vì chúng đi trực tiếp với động từ nguyên mẫu (to + V)."
+    },
+    {
+        q: "19. He was an ________ student, but he always felt that the current educational system did not evaluate his true potential.",
+        opts: ["A. educate", "B. education", "C. educationally", "D. exceptional"],
+        k: 3,
+        tense: "Từ loại (Word Form)",
+        exp: "Cần một tính từ đứng trước danh từ \"student\". Tính từ exceptional (xuất chúng, xuất sắc) hoàn toàn hợp logic và ngữ cảnh mang tính tương phản của câu."
+    },
+    {
+        q: "20. The math problem was ________ a complex task that many freshmen missed the deadline trying to solve it.",
+        opts: ["A. so", "B. too", "C. such", "D. enough"],
+        k: 2,
+        tense: "Cấu trúc Too/Enough/So/Such",
+        exp: "Áp dụng cấu trúc: Such + a/an + Adj + Noun + that. Sau chỗ trống có cụm danh từ \"a complex task\" -> chọn such."
+    },
+    {
+        q: "21. By the time the manager ________ at the airport tomorrow, his assistant will have checked the flight details.",
+        opts: ["A. will arrive", "B. arrives", "C. arrived", "D. is arriving"],
+        k: 1,
+        tense: "Phối thì Tương lai Hoàn thành",
+        exp: "Cấu trúc phối thì tương lai hoàn thành: By the time + S + V (Hiện tại đơn), S + will have + V3/-ed -> chọn arrives."
+    },
+    {
+        q: "22. Yesterday, the student admitted that he ________ higher education the following year.",
+        opts: ["A. will pursue", "B. pursues", "C. would pursue", "D. is pursuing"],
+        k: 2,
+        tense: "Câu gián tiếp & Lùi thì",
+        exp: "Đây là câu tường thuật/gián tiếp (admitted that) có dấu hiệu tương lai \"the following year\" (được lùi từ next year) -> lùi động từ \"will\" thành would pursue."
+    },
+    {
+        q: "23. The continuous assessment program was designed to help students learn at their own ________ without stress.",
+        opts: ["A. speed", "B. pace", "C. time", "D. velocity"],
+        k: 1,
+        tense: "Cụm từ cố định (Collocation)",
+        exp: "Cụm từ cố định (Collocation): at one's own pace (theo tốc độ, nhịp độ phù hợp với khả năng của riêng ai) -> chọn pace."
+    },
+    {
+        q: "24. While the educators ________ about the new curriculum, the system encountered a technical error.",
+        opts: ["A. discussed", "B. will discuss", "C. are discussing", "D. were discussing"],
+        k: 3,
+        tense: "Quá khứ Đơn & Tiếp diễn",
+        exp: "Diễn tả một hành động đang xảy ra trong quá khứ thì có hành động khác xen vào (encountered) -> hành động đang xảy ra chia thì Quá khứ tiếp diễn (were discussing)."
+    },
+    {
+        q: "25. Many self-taught individuals can ________ deep knowledge through free online platforms.",
+        opts: ["A. get", "B. acquire", "C. catch", "D. take"],
+        k: 1,
+        tense: "Cụm từ cố định (Collocation)",
+        exp: "Cụm từ cố định (Collocation): acquire knowledge (tích lũy, tiếp thu kiến thức) -> chọn acquire."
+    },
+    {
+        q: "26. When she arrived at the exam room, she suddenly remembered that she ________ the deadline for registration.",
+        opts: ["A. missed", "B. has missed", "C. had missed", "D. was missing"],
+        k: 2,
+        tense: "Quá khứ Hoàn thành",
+        exp: "Hành động \"lỡ hạn chót\" diễn ra trước hành động \"nhớ ra\" (remembered) và \"đến\" (arrived) trong quá khứ -> chia thì Quá khứ hoàn thành (had missed)."
+    },
+    {
+        q: "27. No sooner ________ the concept been introduced than the students acquired it completely.",
+        opts: ["A. did", "B. had", "C. has", "D. was"],
+        k: 1,
+        tense: "Đảo ngữ (No sooner... than)",
+        exp: "Cấu trúc đảo ngữ \"Vừa mới... thì...\": No sooner + had + S + V3/-ed + than + S + V2/-ed. Do có cấu trúc phân từ hoàn thành bị động \"been introduced\" ở phía sau, trợ động từ bắt buộc phải chọn là had."
+    },
+    {
+        q: "28. The newly built library is ________ spacious that it can accommodate five hundred students at the same time.",
+        opts: ["A. so", "B. such", "C. too", "D. enough"],
+        k: 0,
+        tense: "Cấu trúc Too/Enough/So/Such",
+        exp: "Áp dụng cấu trúc: S + be + so + Adj + that. Sau chỗ trống là tính từ \"spacious\" -> chọn so. Loại \"such\" vì thiếu một cụm danh từ đi kèm."
+    },
+    {
+        q: "29. Hard-working as they are, many high school graduates frequently ________ the deadline for submitting their application portfolios.",
+        opts: ["A. miss", "B. lose", "C. drop", "D. skip"],
+        k: 0,
+        tense: "Cụm từ cố định (Collocation)",
+        exp: "Cụm từ cố định (Collocation): miss the deadline (lỡ, muộn hạn chót). (Đầu câu sử dụng cấu trúc đảo ngữ nhượng bộ: Adj + as + S + be)."
+    },
+    {
+        q: "30. Neither the principal nor the experienced educators ________ that the new online assessment method will fail.",
+        opts: ["A. realizes", "B. realize", "C. is realizing", "D. has realized"],
+        k: 1,
+        tense: "Sự hòa hợp Chủ ngữ - Động từ",
+        exp: "Sự hòa hợp chủ - vị: Với cấu trúc Neither S1 nor S2, động từ chia theo S2 (the experienced educators - số nhiều) -> giữ nguyên mẫu là realize."
+    }
+];
+
+let totalSeconds = 2400; 
+let timerInterval = null;
+let quizActive = false;    
+let cheatCount = 0;        
+let timeEpochStarted = 0;  
+let timeStartedStr = "";  
+
+const area = document.getElementById('quiz-area');
+const navGrid = document.getElementById('nav-grid-area');
+const timerDisplay = document.getElementById('quiz-timer');
+
+let areaHtml = "";
+let navHtml = "";
+
+quizData.forEach((item, i) => {
+    areaHtml += `<div class="question-box locked" id="q-box-${i}">
+        <p><strong>Câu ${i + 1}.</strong> ${item.q.substring(item.q.indexOf('.') + 1).trim()}</p>
+        ${item.opts.map((opt, j) => `<label class="option-label"><input type="radio" name="q${i}" value="${j}" disabled onchange="updateProgress(${i})"> <span>${opt}</span></label>`).join('')}
+        <div id="fb-${i}" class="feedback"></div>
+    </div>`;
+
+    navHtml += `<a href="#q-box-${i}" class="nav-item locked" id="nav-item-${i}" onclick="toggleFlag(event, ${i})">${i + 1}</a>`;
+});
+
+area.innerHTML = areaHtml;
+navGrid.innerHTML = navHtml;
+
+function validateNameInput() {
+    const name = document.getElementById('student-name').value.trim();
+    document.getElementById('btn-start-quiz').disabled = (name.length === 0);
+}
+
+function startQuiz() {
+    quizActive = true;
+    let start = new Date();
+    timeEpochStarted = start.getTime();
+    timeStartedStr = start.toLocaleTimeString() + " " + start.toLocaleDateString();
+
+    document.getElementById('student-name').disabled = true;
+    document.getElementById('btn-start-quiz').disabled = true;
+    document.getElementById('btn-start-quiz').innerText = "ĐANG TRONG BÀI THI";
+
+    const questionBoxes = document.querySelectorAll('.question-box');
+    questionBoxes.forEach((box, i) => {
+        box.classList.remove('locked');
+        document.querySelectorAll(`input[name="q${i}"]`).forEach(input => input.disabled = false);
+    });
+
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('locked'));
+    document.getElementById('btn-submit-total').disabled = false;
+
+    startTimer();
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        if (totalSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.innerHTML = "00:00";
+            timerDisplay.classList.add('timer-urgent');
+            alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài của em.");
+            submitTotal(true); 
+            return;
+        }
+
+        totalSeconds--;
+        let mins = Math.floor(totalSeconds / 60);
+        let secs = totalSeconds % 60;
+
+        timerDisplay.innerHTML = (mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs;
+
+        if (totalSeconds <= 60) {
+            timerDisplay.classList.add('timer-urgent');
+        } else {
+            timerDisplay.classList.remove('timer-urgent');
+        }
+    }, 1000);
+}
+
+function toggleFlag(event, index) {
+    const navItem = document.getElementById(`nav-item-${index}`);
+    if (navItem.classList.contains('locked')) return;
+
+    navItem.classList.toggle('flagged');
+    navItem.innerHTML = navItem.classList.contains('flagged') ? `${index + 1} 🚩` : `${index + 1}`;
+}
+
+function updateProgress(index) {
+    const navItem = document.getElementById(`nav-item-${index}`);
+    if(navItem) {
+        navItem.classList.add('answered');
+    }
+}
+
+function revealAllAnswers() {
+    quizData.forEach((item, i) => {
+        const val = document.querySelector(`input[name="q${i}"]:checked`)?.value;
+        const fb = document.getElementById(`fb-${i}`);
+        
+        if(val == quizData[i].k) { 
+            fb.innerHTML = "🎉 Đúng! " + quizData[i].exp; 
+            fb.className = "feedback correct"; 
+        } else { 
+            fb.innerHTML = "❌ Sai rồi! " + quizData[i].exp; 
+            fb.className = "feedback wrong"; 
+        }
+        
+        document.querySelectorAll(`input[name="q${i}"]`).forEach(input => input.disabled = true);
+    });
+}
+
+function submitTotal(isTimeOut = false) {
+    let answeredCount = 0;
+    quizData.forEach((item, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected) { answeredCount++; }
+    });
+
+    if (!isTimeOut && answeredCount < quizData.length) {
+        alert(`Yêu cầu làm hết ${quizData.length} câu trước khi nộp bài!\n(Hiện tại em mới làm được ${answeredCount}/${quizData.length} câu thôi nhé)`);
+        return; 
+    }
+
+    clearInterval(timerInterval); 
+    quizActive = false; 
+    
+    let name = document.getElementById('student-name').value.trim();
+    if(!name) { name = "Học sinh ẩn danh (Hết giờ tự nộp)"; }
+
+    let score = 0;
+    let detailsArray = []; 
+    let weakTopics = []; 
+
+    quizData.forEach((item, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const isCorrect = (selected?.value == item.k);
+        if(isCorrect) {
+            score++;
+        } else {
+            if (!weakTopics.includes(item.tense)) {
+                weakTopics.push(item.tense);
+            }
+        }
+        detailsArray.push(isCorrect ? "1" : "0");
+    });
+
+    let wrongCount = quizData.length - score;
+
+    // Cập nhật điểm số vào bảng đánh giá chi tiết
+    document.getElementById('txt-correct-count').innerText = "Đúng: " + score;
+    document.getElementById('txt-wrong-count').innerText = "Sai: " + wrongCount;
+    document.getElementById('txt-total-score').innerText = `${score}/${quizData.length}`;
+
+    // Xử lý vùng gợi ý cải thiện kiến thức
+    const boxImprovement = document.getElementById('box-improvement');
+    const listImprovement = document.getElementById('list-improvement');
+    
+    if(boxImprovement && listImprovement) {
+        if(weakTopics.length > 0) {
+            listImprovement.innerHTML = weakTopics.map(topic => `<li>${topic}</li>`).join('');
+            boxImprovement.style.display = "block";
+        } else {
+            listImprovement.innerHTML = "<li>Tuyệt vời! Em không sai chủ đề ngữ pháp nào trong bài thi này. Phát huy nhé!</li>";
+            boxImprovement.style.display = "block";
+        }
+    }
+    
+    document.getElementById('html-score-display').style.display = "block"; 
+    document.getElementById('btn-submit-total').disabled = true;
+
+    if (typeof revealAllAnswers === "function") { revealAllAnswers(); }
+    window.scrollTo({top: 0, behavior: 'smooth'});
+
+    // Tính thời gian làm bài
+    let endTime = new Date();
+    let timeEndedStr = endTime.toLocaleTimeString() + " " + endTime.toLocaleDateString();
+    let diffMs = endTime.getTime() - timeEpochStarted;
+    let diffMins = Math.floor(diffMs / 60000);
+    let diffSecs = Math.floor((diffMs % 60000) / 1000);
+    let durationStr = `${diffMins} phút ${diffSecs} giây`;
+    let startStr = timeStartedStr !== "" ? timeStartedStr : timeEndedStr;
+
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbz59mJkqzxh2beEvXzYtXPtGsfMxo1LqH5aZugtb8aDYEQ5chRU4iz_rGlCRXgt9ao/exec";
+    const secureToken = btoa(encodeURIComponent("thayhoa2026_" + name + "_" + score + "_" + cheatCount + "_secured"));
+
+    const payload = {
+        studentName: name,
+        score: score + "/" + quizData.length,
+        timeStarted: startStr,
+        timeEnded: timeEndedStr,
+        duration: durationStr,
+        cheatingAlert: "Đổi tab: " + cheatCount + " lần",
+        details: detailsArray.join(","),
+        accessToken: secureToken 
+    };
+    
+    fetch(webAppUrl, {
+        method: "POST",
+        mode: "no-cors", 
+        headers: { "Content-Type": "text/plain;charset=UTF-8" }, 
+        body: JSON.stringify(payload)
+    })
+    .then(() => {
+        alert(isTimeOut ? "Hết giờ làm bài! Hệ thống đã khóa và nộp bài tự động." : "Nộp bài thành công! Thầy đã nhận được phổ điểm chi tiết của em.");
+    })
+    .catch(err => {
+        console.log("Lỗi gửi Sheets", err);
+        alert("Nộp bài thành công! Thầy đã nhận được phổ điểm chi tiết của em.");
+    });
+}
+
+// THEO DÕI ĐỔI TAB GIAN LẬN
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && quizActive) {
+        cheatCount++;
+    }
+});
+
+// CHỐNG SAO CHÉP BẢO MẬT AN TOÀN
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey && ['c','C','x','X','u','U','s','S'].includes(e.key)) e.preventDefault();
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key))) e.preventDefault();
+});
+</script>
+</body>
+</html>
+
+

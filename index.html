@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Bài Tập Luyện Thi HSA - Thầy Hòa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header tinh gọn -->
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-800 to-slate-900 text-white shadow-lg py-4 px-6 text-center">
+        <h1 class="text-xl font-black tracking-tight text-amber-400">HỆ THỐNG LUYỆN THI HSA – THẦY HÒA</h1>
+        <p class="text-[11px] text-blue-200 tracking-wider font-semibold uppercase mt-0.5">Trung Tâm Gia Sư Giỏi Nghệ An</p>
+    </header>
+
+    <!-- Nội dung chính lựa chọn bài tập -->
+    <main class="max-w-md w-full mx-auto px-4 py-12 flex-grow flex flex-col justify-center">
+        <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 text-center">
+            
+            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-blue-600 text-2xl shadow-sm">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            
+            <h2 class="text-xl font-extrabold text-slate-950 mb-2">Danh Sách Bài Tập Luyện Tập</h2>
+            <p class="text-xs text-slate-500 leading-relaxed mb-8">Buổi học này gồm có 2 phần bài tập phân hóa. Học sinh hãy click chọn lần lượt từng bài để hoàn thành theo đúng tiến độ.</p>
+            
+            <!-- Khu vực chứa 2 nút bài tập -->
+            <div class="space-y-4">
+                
+                <!-- Nút Bài Tập 1 -->
+                <a href="./index.html" class="flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 p-4 rounded-2xl border border-blue-100 transition duration-200 group">
+                    <div class="flex items-center space-x-3 text-left">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shadow-sm">01</span>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Bài Tập Số 1</h3>
+                            <p class="text-[11px] text-slate-500">Nhấp để làm phần 1</p>
+                        </div>
+                    </div>
+                    <span class="text-blue-600 text-sm transform group-hover:translate-x-1 transition"><i class="fa-solid fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Nút Bài Tập 2 -->
+                <a href="./index.html" class="flex items-center justify-between bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 p-4 rounded-2xl border border-emerald-100 transition duration-200 group">
+                    <div class="flex items-center space-x-3 text-left">
+                        <span class="bg-emerald-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shadow-sm">02</span>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Bài Tập Số 2</h3>
+                            <p class="text-[11px] text-slate-500">Nhấp để làm phần 2</p>
+                        </div>
+                    </div>
+                    <span class="text-emerald-600 text-sm transform group-hover:translate-x-1 transition"><i class="fa-solid fa-chevron-right"></i></span>
+                </a>
+
+            </div>
+
+            <!-- Nút Quay lại trang chủ hệ thống nếu cần -->
+            <div class="mt-8 pt-6 border-t border-slate-100">
+                <button onclick="history.back()" class="inline-flex items-center space-x-2 text-[11px] text-slate-500 hover:text-slate-800 font-semibold transition">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Quay lại trang trước</span>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-500 text-[10px] py-4 text-center border-t border-slate-800">
+        <p class="font-semibold text-slate-400">© 2026 Hệ Thống Luyện Thi HSA – Thầy Hòa</p>
+    </footer>
+
+</body>
+</html>
